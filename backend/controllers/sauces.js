@@ -6,6 +6,8 @@ exports.createSauce = (req, res, next) => {
     delete sauceObject._id;
     const sauce = new Sauce({
       ...sauceObject,
+      likes: 0,
+      dislikes: 0,
       imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
     });
     sauce.save()
@@ -30,15 +32,41 @@ exports.getOneSauce = (req, res, next) => {
 };
 
 exports.likeSauce = (req, res, next) => {
-  
+  const userId = req.body.userId;
+  const like = req.body.like;
+  Sauce.findOne({_id: req.params.id})
+  .then((sauce)=>{
+    if (sauce.usersLiked.indexOf(userId) > -1) {
+        Sauce.updateOne({ _id: req.params.id}, { $inc: {likes: -1}, $pull: {usersLiked: userId} })
+        .then(() => res.status(200).json({ message: 'Like supprimé !'}))
+        .catch(error => res.status(400).json({ error }));
+    }
+    if (sauce.usersDisliked.indexOf(userId) > -1) {
+      Sauce.updateOne({ _id: req.params.id}, { $inc: {dislikes: -1}, $pull: {usersDisliked: userId} })
+      .then(() => res.status(200).json({ message: 'Dislike supprimé !'}))
+      .catch(error => res.status(400).json({ error }));
+    }
+  })
+  .then(()=>{
+    if (like === 1){
+      Sauce.updateOne({ _id: req.params.id}, { $inc: {likes: 1}, $push: {usersLiked: userId} })
+      .then(() => res.status(200).json({ message: 'Like ajouté !'}))
+      .catch(error => res.status(400).json({ error }));
+    }
+    if (like === -1){
+      Sauce.updateOne({ _id: req.params.id}, { $inc: {dislikes: 1}, $push: {usersDisliked: userId} })
+      .then(() => res.status(200).json({ message: 'Dislike ajouté !'}))
+      .catch(error => res.status(400).json({ error }));
+    }
+  })
+  .catch(error => res.status(500).json({ error }));
 };
 
 exports.modifySauce = (req, res, next) => {
     const sauceObject = req.file ?
       { 
         ...JSON.parse(req.body.sauce),
-        imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
-        
+        imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`        
       } : { ...req.body };
 
     Sauce.updateOne({ _id: req.params.id }, { ...sauceObject, _id: req.params.id })
