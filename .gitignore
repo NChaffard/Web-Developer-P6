@@ -4,6 +4,11 @@
 # Env
 /backend/.env
 
+#Images
+/backend/images/*
+!/backend/images/donotremove.txt
+
+
 # Compiled output
 /dist
 /tmp
@@ -41,7 +46,6 @@ yarn-error.log
 /libpeerconnection.log
 testem.log
 /typings
-/backend/images/*
 
 # System files
 .DS_Store
