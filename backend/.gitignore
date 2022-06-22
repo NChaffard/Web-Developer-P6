@@ -1,0 +1,9 @@
+# Env
+.env
+
+#Images
+/images/*
+/images/donotremove.txt
+
+#Node
+/node_modules

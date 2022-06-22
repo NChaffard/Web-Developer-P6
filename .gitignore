@@ -1,12 +1,6 @@
 # See http://help.github.com/ignore-files/ for more about ignoring files.
 
 
-# Env
-/backend/.env
-
-#Images
-/backend/images/*
-!/backend/images/donotremove.txt
 
 
 # Compiled output
@@ -17,7 +11,6 @@
 
 # Node
 /node_modules
-/backend/node_modules
 npm-debug.log
 yarn-error.log
 
