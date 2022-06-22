@@ -1,6 +1,11 @@
+// Import dependancies
 const http = require('http');
+// Load environment variables
+const dotenv = require('dotenv').config();
+// Import app
 const app = require('./app');
 
+// Normalize port
 const normalizePort = val => {
   const port = parseInt(val, 10);
 
@@ -12,9 +17,12 @@ const normalizePort = val => {
   }
   return false;
 };
+
+// Set port
 const port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
 
+// Error handling
 const errorHandler = error => {
   if (error.syscall !== 'listen') {
     throw error;
@@ -34,14 +42,16 @@ const errorHandler = error => {
       throw error;
   }
 };
-
+// Create server
 const server = http.createServer(app);
-
+// If error, go to errorHandler
 server.on('error', errorHandler);
+// If server is on listening
 server.on('listening', () => {
   const address = server.address();
   const bind = typeof address === 'string' ? 'pipe ' + address : 'port ' + port;
+  // Show the port or the pipe the server is listening to
   console.log('Listening on ' + bind);
 });
-
+// The server listen the port we have specified
 server.listen(port);
